@@ -1,0 +1,77 @@
+version: "3.7"
+
+x-restart-policy:
+  &restart-policy
+  restart_policy:
+    condition: on-failure
+    delay: 30s
+    max_attempts: 3
+    window: 30s
+
+x-rollback-config:
+  &rollback-config
+  rollback_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: continue
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+x-update-config:
+  &update-config
+  update_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: pause
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+networks:
+
+  tomfi_registry_net:
+    driver: overlay
+    labels:
+      info.tomfi.schemas.docker.network.name: "Registry network."
+      info.tomfi.schemas.docker.network.description: "Use for segregating the private docker registries."
+    name: tomfi_registry_net
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
+
+services:
+
+  tomfi_private_docker:
+    image: registry:2.7.1
+    init: true
+    ports:
+      - target: 5000
+        published: 4000
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/registry:/var/lib/registry
+    networks:
+      tomfi_registry_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Docker registry."
+      info.tomfi.schemas.docker.container.description: "TomFi private registry."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Docker registry."
+        info.tomfi.schemas.docker.service.description: "TomFi private registry."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/v2"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s

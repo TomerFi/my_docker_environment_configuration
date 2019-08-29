@@ -1,0 +1,45 @@
+version: '3.6'
+
+services:
+
+  homeassistant:
+    image: homeassistant/raspberrypi3-homeassistant:0.95.4
+    container_name: has_homeassistant
+    privileged: true
+    cap_add:
+      - ALL
+    ports:
+      - "8123:8123"
+    volumes:
+      - /homeassistant:/config:rw
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: "host"
+    labels:
+      info.tomfi.schemas.docker.container.name: "Homeassistant rpi3 docker image."
+      info.tomfi.schemas.docker.container.description: "Open source home automation that puts local control and privacy first."
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
+
+  appdaemon:
+    image: <Reducted-Private-Repository>/tomerfi/appdaemon305:rpi_fix
+    container_name: has_appdaemon
+    ports:
+      - "5555:5555"
+      - "5750:5750"
+    volumes:
+      - /appdaemon:/conf:rw
+    network_mode: "host"
+    labels:
+      info.tomfi.schemas.docker.container.name: "AppDaemon docker image."
+      info.tomfi.schemas.docker.container.description: "Open source home automation tool built any environment that requires a robust event driven architecture."
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s

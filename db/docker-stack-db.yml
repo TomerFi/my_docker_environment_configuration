@@ -1,0 +1,185 @@
+version: "3.7"
+
+x-restart-policy:
+  &restart-policy
+  restart_policy:
+    condition: on-failure
+    delay: 30s
+    max_attempts: 3
+    window: 30s
+
+x-rollback-config:
+  &rollback-config
+  rollback_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: continue
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+x-update-config:
+  &update-config
+  update_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: pause
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+secrets:
+  mariadb_root_password_secret:
+    file: secrets/.secret_mariadb_root_password
+  postgres_user_secret:
+    file: secrets/.secret_postgres_user
+  postgres_password_secret:
+    file: secrets/.secret_postgres_password
+
+networks:
+
+  tomfi_mariadb_net:
+    driver: overlay
+    labels:
+      info.tomfi.schemas.docker.network.name: "MariaDB network."
+      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the MariaDB."
+    name: tomfi_mariadb_net
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
+
+  tomfi_mssql_net:
+    driver: overlay
+    labels:
+      info.tomfi.schemas.docker.network.name: "Microsoft SQL network."
+      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Microsoft sql."
+    name: tomfi_mssql_net
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
+
+  tomfi_postgres_net:
+    driver: overlay
+    labels:
+      info.tomfi.schemas.docker.network.name: "PostgreSQL network."
+      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the PostgreSQL."
+    name: tomfi_postgres_net
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
+
+services:
+
+  mariadb:
+    image: mariadb:10.4.4-bionic
+    init: true
+    secrets:
+      - mariadb_root_password_secret
+    environment:
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mariadb_root_password_secret
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/mariadb:/var/lib/mysql:rw
+    networks:
+      tomfi_mariadb_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Maria DB."
+      info.tomfi.schemas.docker.container.description: "Docker hub official mariadb."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Maria DB."
+        info.tomfi.schemas.docker.service.description: "Docker hub official mariadb."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    init: true
+    env_file: env/.env_mssql
+    ports:
+      - target: 1433
+        published: 1433
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/mssql:/var/opt/mssql:rw
+    networks:
+      tomfi_mssql_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Microsoft SQL."
+      info.tomfi.schemas.docker.container.description: "Microsoft official mssql."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Microsoft SQL."
+        info.tomfi.schemas.docker.service.description: "Microsoft official mssql."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -Q \"SELECT 1\" || exit 1"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
+
+  postgres:
+    image: postgres:11.3
+    init: true
+    secrets:
+      - postgres_user_secret
+      - postgres_password_secret
+    environment:
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user_secret
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password_secret
+      - POSTGRES_DB=postgres
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/postgres:/var/lib/postgresql/data:rw
+    networks:
+      tomfi_postgres_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "PostgreSQL."
+      info.tomfi.schemas.docker.container.description: "Docker official postgresql."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "PostgreSQL."
+        info.tomfi.schemas.docker.service.description: "Docker official postgresql."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -qd $$POSTGRES_DB || exit 1"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s

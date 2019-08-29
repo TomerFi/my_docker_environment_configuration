@@ -1,0 +1,198 @@
+version: "3.7"
+
+x-restart-policy:
+  &restart-policy
+  restart_policy:
+    condition: on-failure
+    delay: 30s
+    max_attempts: 3
+    window: 30s
+
+x-rollback-config:
+  &rollback-config
+  rollback_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: continue
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+x-update-config:
+  &update-config
+  update_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: pause
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+networks:
+
+  tomfi_scm_net:
+    driver: overlay
+    labels:
+      info.tomfi.schemas.docker.network.name: "SCM network."
+      info.tomfi.schemas.docker.network.description: "Use for segregating SCM, CI and CD services."
+    name: tomfi_scm_net
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
+
+  tomfi_postgres_net:
+    external: true
+
+services:
+
+  gitea:
+    image: gitea/gitea:1.9
+    init: true
+    env_file: env/.env_gitea
+    ports:
+      - target: 3000
+        published: 4582
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/gitea:/data
+    networks:
+      tomfi_scm_net:
+      tomfi_postgres_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Gitea."
+      info.tomfi.schemas.docker.container.description: "A painless self-hosted Git service."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Gitea."
+        info.tomfi.schemas.docker.service.description: "A painless self-hosted Git service."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
+
+  drone:
+    image: drone/drone:linux-amd64
+    init: true
+    env_file: env/.env_drone
+    ports:
+      - target: 80
+        published: 4583
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/drone:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      tomfi_scm_net:
+      tomfi_postgres_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Drone CI."
+      info.tomfi.schemas.docker.container.description: "A self-service Continuous Delivery platform."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Drone CI."
+        info.tomfi.schemas.docker.service.description: "A self-service Continuous Delivery platform."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    init: true
+    user: root
+    ports:
+      - target: 8080
+        published: 4584
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      tomfi_scm_net:
+      tomfi_postgres_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Jenkins CI."
+      info.tomfi.schemas.docker.container.description: "An open source automation server."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Jenkins CI."
+        info.tomfi.schemas.docker.service.description: "An open source automation server."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
+
+  sonarqube:
+    image: sonarqube:7.9.1-community
+    env_file: env/.env_sonarqube
+    ports:
+      - target: 9000
+        published: 4585
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/sonarqube/conf:/opt/sonarqube/conf
+      - /opt/sonarqube/data:/opt/sonarqube/data
+      - /opt/sonarqube/logs:/opt/sonarqube/logs
+      - /opt/sonarqube/extensions/plugins:/opt/sonarqube/extensions/plugins
+      - /opt/sonarqube/extensions/downloads:/opt/sonarqube/extensions/downloads
+    networks:
+      tomfi_scm_net:
+      tomfi_postgres_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "SonarQube."
+      info.tomfi.schemas.docker.container.description: "An open source product for continuous inspection of code quality."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "SonarQube."
+        info.tomfi.schemas.docker.service.description: "An open source product for continuous inspection of code quality."
+      placement:
+        constraints: 
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9000"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
