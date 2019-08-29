@@ -5,7 +5,7 @@ It will probably won't work for you as-is,</br>
 but you can of course tweak it to suite your needs.
 
 
-You can also check out my [Home Assistant][2] configuration and [AppDaemon Configuration][3].
+You can also check out my [Home Assistant][2] configuration and [AppDaemon][3] configuration.
 
 I'm running a **Hybrid Swarm** consist of the following nodes:
 
