@@ -15,7 +15,7 @@ I'm running a **Hybrid Swarm** consist of the following nodes:
 | `haserver`       | `Worker`  | `18.09.0`      | `armv71` | `Raspbian buster 10 ` |
 | `docker-desktop` | `Worker`  | `19.03.1`      | `x86_64` | `Windows 10 Pro`      |
 
-> My Swarm is running beyond an `Nginx Reverse Proxy`,</br>
+> My Swarm is running behind an `Nginx Reverse Proxy`,</br>
 > The ports published in my configuration are internal.
 
 <!-- real links -->
