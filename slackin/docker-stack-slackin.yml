@@ -1,9 +1,11 @@
+---
+
 version: "3.7"
 
 x-image-version:
   &image-version
   image: tomerfi/slackin_docker:latest
-  
+
 x-restart-policy:
   &restart-policy
   restart_policy:
@@ -69,7 +71,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Slackin aioswitcher."
         info.tomfi.schemas.docker.service.description: "Slackin instance for aioswitcher repository."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -99,7 +101,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Slackin slackin_docker."
         info.tomfi.schemas.docker.service.description: "Slackin instance for slackin_docker repository."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -129,7 +131,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Slackin switcher_webapi."
         info.tomfi.schemas.docker.service.description: "Slackin instance for switcher_webapi repository."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config

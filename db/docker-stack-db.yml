@@ -1,3 +1,5 @@
+---
+
 version: "3.7"
 
 x-restart-policy:
@@ -42,7 +44,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "MariaDB network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the MariaDB."
+      info.tomfi.schemas.docker.network.description: "Use for internal servicesinteracting with MariaDB."
     name: tomfi_mariadb_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -51,7 +53,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Microsoft SQL network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Microsoft sql."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Microsoft sql."
     name: tomfi_mssql_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -60,7 +62,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "PostgreSQL network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the PostgreSQL."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with PostgreSQL."
     name: tomfi_postgres_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -94,7 +96,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Maria DB."
         info.tomfi.schemas.docker.service.description: "Docker hub official mariadb."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -130,7 +132,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Microsoft SQL."
         info.tomfi.schemas.docker.service.description: "Microsoft official mssql."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -172,7 +174,7 @@ services:
         info.tomfi.schemas.docker.service.name: "PostgreSQL."
         info.tomfi.schemas.docker.service.description: "Docker official postgresql."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config

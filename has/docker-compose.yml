@@ -1,3 +1,5 @@
+---
+
 version: '3.6'
 
 services:
@@ -17,7 +19,7 @@ services:
     network_mode: "host"
     labels:
       info.tomfi.schemas.docker.container.name: "Homeassistant rpi3 docker image."
-      info.tomfi.schemas.docker.container.description: "Open source home automation that puts local control and privacy first."
+      info.tomfi.schemas.docker.container.description: "Open source home automation."
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8123"]
       interval: 5m
@@ -36,7 +38,7 @@ services:
     network_mode: "host"
     labels:
       info.tomfi.schemas.docker.container.name: "AppDaemon docker image."
-      info.tomfi.schemas.docker.container.description: "Open source home automation tool built any environment that requires a robust event driven architecture."
+      info.tomfi.schemas.docker.container.description: "Open source home automation robust event driven tool."
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5555"]
       interval: 5m

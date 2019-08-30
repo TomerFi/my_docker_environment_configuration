@@ -1,3 +1,5 @@
+---
+
 version: "3.7"
 
 x-restart-policy:
@@ -64,7 +66,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Docker registry."
         info.tomfi.schemas.docker.service.description: "TomFi private registry."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config

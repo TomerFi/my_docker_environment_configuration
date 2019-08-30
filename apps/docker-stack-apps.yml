@@ -1,3 +1,5 @@
+---
+
 version: "3.7"
 
 x-restart-policy:
@@ -34,7 +36,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Traccar network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Traccar."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Traccar."
     name: tomfi_traccar_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -43,7 +45,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Qbittorrent network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Qbittorrent."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Qbittorrent."
     name: tomfi_qbittorrent_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -52,7 +54,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Switcher WebAPI network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Switcher device WebAPI."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with the Switcher WebAPI."
     name: tomfi_switcher_webapi_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -81,26 +83,20 @@ services:
       tomfi_mariadb_net:
     labels:
       info.tomfi.schemas.docker.container.name: "Rainloop mail client."
-      info.tomfi.schemas.docker.container.description: "Rainloop modern maill client for use with seperated mail server."
+      info.tomfi.schemas.docker.container.description: "Rainloop mail client for use with seperated mail server."
     deploy:
       endpoint_mode: vip
       mode: replicated
       replicas: 1
       labels:
         info.tomfi.schemas.docker.service.name: "Rainloop mail client."
-        info.tomfi.schemas.docker.service.description: "Rainloop modern maill client for use with seperated mail server."
+        info.tomfi.schemas.docker.service.description: "Rainloop mail client for use with seperated mail server."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
       <<: *update-config
-    #healthcheck:
-      #test: ["CMD", "curl", "--connect-timeout", "15", "--show-error", "--silent", -f", "-L", "http://localhost:8888"]
-      #interval: 5m
-      #timeout: 10s
-      #retries: 3
-      #start_period: 0s
 
   qbittorrent:
     image: linuxserver/qbittorrent:amd64-latest
@@ -127,12 +123,13 @@ services:
         info.tomfi.schemas.docker.service.name: "Qbittorrent."
         info.tomfi.schemas.docker.service.description: "Linuxserver's Qbittorrent."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
       <<: *update-config
     healthcheck:
+      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "curl --connect-timeout 15 --show-error --silent --fail --location \"http://localhost:8989\" > /dev/null || exit 1"]
       interval: 5m
       timeout: 10s
@@ -168,12 +165,13 @@ services:
         info.tomfi.schemas.docker.service.name: "Traccar platform."
         info.tomfi.schemas.docker.service.description: "Modern GPS tracking platform for tomfi home."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
       <<: *update-config
     healthcheck:
+      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "if [ $$(curl -L -o /dev/null -s -w %{http_code} http://localhost:8082) -eq 200 ]; then echo 'healthcheck OK'; exit 0; else echo 'healthcheck ERROR'; exit 1; fi"]
       interval: 5m
       timeout: 10s
@@ -202,12 +200,13 @@ services:
         info.tomfi.schemas.docker.service.name: "Switcher WebAPI."
         info.tomfi.schemas.docker.service.description: "Web API for controlling the Switcher device."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
       <<: *update-config
     healthcheck:
+      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "if [ $$(curl -L -o /dev/null -s -w %{http_code} http://localhost:8000/switcher/get_state) -eq 200 ]; then echo 'healthcheck OK'; exit 0; else echo 'healthcheck ERROR'; exit 1; fi"]
       interval: 15m
       timeout: 10s

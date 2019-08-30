@@ -1,3 +1,5 @@
+---
+
 # DO NOT USE THIS DOCKER STACK CONFIGURATION
 # HomeAssistant needs to run with host.
 # Use the docker-compose orchestration file locally on rpi.
@@ -42,7 +44,7 @@ volumes:
       device: ":/opt/homeassistant"
     labels:
       info.tomfi.schemas.docker.volume.name: "Home-Asistant configuration."
-      info.tomfi.schemas.docker.volume.description: "Home-Asistant path for configuration, logs and all other dynamic files."
+      info.tomfi.schemas.docker.volume.description: "Home-Asistant path for configuration, logs and other files."
       info.tomfi.schemas.docker.volume.driver: "nfs"
 
   appdaemon_config:
@@ -53,7 +55,7 @@ volumes:
       device: ":/opt/appdaemon"
     labels:
       info.tomfi.schemas.docker.volume.name: "AppDaemon configuration."
-      info.tomfi.schemas.docker.volume.description: "AppDaemon is a loosely coupled, multithreaded, sandboxed python execution environment for writing automation apps for home automation projects."
+      info.tomfi.schemas.docker.volume.description: "Sandboxed python environment for writing automation apps."
       info.tomfi.schemas.docker.volume.driver: "nfs"
 
 networks:
@@ -109,16 +111,16 @@ services:
       tomfi_traccar_net:
     labels:
       info.tomfi.schemas.docker.container.name: "Homeassistant rpi3 docker image."
-      info.tomfi.schemas.docker.container.description: "Open source home automation that puts local control and privacy first."
+      info.tomfi.schemas.docker.container.description: "Open source home automation."
     deploy:
       endpoint_mode: vip
       mode: replicated
       replicas: 1
       labels:
         info.tomfi.schemas.docker.service.name: "Homeassistant rpi3 docker image."
-        info.tomfi.schemas.docker.service.description: "Open source home automation that puts local control and privacy first."
+        info.tomfi.schemas.docker.service.description: "Open source home automation."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == haserver
       <<: *restart-policy
       <<: *rollback-config
@@ -153,16 +155,16 @@ services:
       tomfi_mosquitto_net:
     labels:
       info.tomfi.schemas.docker.container.name: "AppDaemon docker image."
-      info.tomfi.schemas.docker.container.description: "Open source home automation tool built any environment that requires a robust event driven architecture."
+      info.tomfi.schemas.docker.container.description: "Open source home automation robust event driven tool."
     deploy:
       endpoint_mode: vip
       mode: replicated
       replicas: 1
       labels:
         info.tomfi.schemas.docker.service.name: "AppDaemon docker image."
-        info.tomfi.schemas.docker.service.description: "Open source home automation tool built any environment that requires a robust event driven architecture."
+        info.tomfi.schemas.docker.service.description: "Open source home automation robust event driven tool."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == haserver
       <<: *restart-policy
       <<: *rollback-config

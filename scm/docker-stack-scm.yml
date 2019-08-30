@@ -1,3 +1,5 @@
+---
+
 version: "3.7"
 
 x-restart-policy:
@@ -69,7 +71,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Gitea."
         info.tomfi.schemas.docker.service.description: "A painless self-hosted Git service."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -107,7 +109,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Drone CI."
         info.tomfi.schemas.docker.service.description: "A self-service Continuous Delivery platform."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -145,7 +147,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Jenkins CI."
         info.tomfi.schemas.docker.service.description: "An open source automation server."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -176,16 +178,16 @@ services:
       tomfi_postgres_net:
     labels:
       info.tomfi.schemas.docker.container.name: "SonarQube."
-      info.tomfi.schemas.docker.container.description: "An open source product for continuous inspection of code quality."
+      info.tomfi.schemas.docker.container.description: "Open source product for continuous inspection of code quality."
     deploy:
       endpoint_mode: vip
       mode: replicated
       replicas: 1
       labels:
         info.tomfi.schemas.docker.service.name: "SonarQube."
-        info.tomfi.schemas.docker.service.description: "An open source product for continuous inspection of code quality."
+        info.tomfi.schemas.docker.service.description: "Open source product for continuous inspection of code quality."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config

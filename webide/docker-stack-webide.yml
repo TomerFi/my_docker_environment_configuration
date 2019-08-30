@@ -1,3 +1,5 @@
+---
+
 version: "3.7"
 
 x-restart-policy:
@@ -65,7 +67,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Cloud9 IDE docker environment."
         info.tomfi.schemas.docker.service.description: "Alpine based Cloud9 Ide for docker mng environment."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -95,7 +97,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Cloud9 IDE docker environment."
         info.tomfi.schemas.docker.service.description: "Cloud9 Ide for home assistant config environment."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == haserver
       <<: *restart-policy
       <<: *rollback-config
@@ -125,7 +127,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Cloud9 IDE docker environment."
         info.tomfi.schemas.docker.service.description: "Cloud9 Ide for appdaemon dev environment."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == haserver
       <<: *restart-policy
       <<: *rollback-config

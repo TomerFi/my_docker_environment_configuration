@@ -1,3 +1,5 @@
+---
+
 version: '3.7'
 
 x-restart-policy:
@@ -29,7 +31,7 @@ x-update-config:
     order: stop-first
 
 secrets:
-  
+
   cf_api_email_secret:
     file: secrets/.secret_cf_api_email
 
@@ -53,6 +55,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Docker socket access."
+      # yamllint disable-line rule:line-length
       info.tomfi.schemas.docker.network.description: "Use for accesing the docker socket securely. Instead of mounting /var/run/docker.sock use http://infr_securersocket:2375 as endpoint."
     name: tomfi_secure_docker_access
     driver_opts:
@@ -63,7 +66,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Traefik proxy network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Traefik reverse proxy."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Traefik proxy."
     name: tomfi_traefik_proxy_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -72,7 +75,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Nginx proxy network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Nginx reverse proxy."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Nginx proxy."
     name: tomfi_nginx_proxy_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -90,7 +93,7 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Mosquitto mqtt network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services that needs to interact with the Mosquitto mqtt."
+      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Mosquitto mqtt."
     name: tomfi_mosquitto_net
     driver_opts:
       com.docker.network.driver.mtu: 1400
@@ -137,7 +140,7 @@ services:
         info.tomfi.schemas.docker.service.name: "TomFi mailserver."
         info.tomfi.schemas.docker.service.description: "Use for mail services backend."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -202,7 +205,7 @@ services:
         info.tomfi.schemas.docker.service.name: "Traefik modern HTTP reverse proxy."
         info.tomfi.schemas.docker.service.description: "Use as reverse proxy for http services only."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
@@ -210,7 +213,6 @@ services:
 
   nginx:
     image: <Reducted-Private-Repository>/tomerfi/nginx_mail_proxy:0.1
-    #image: nginx:1.16.0
     init: true
     volumes:
       - /opt/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -230,16 +232,11 @@ services:
         info.tomfi.schemas.docker.service.name: "Nginx reverse proxy."
         info.tomfi.schemas.docker.service.description: "Used as reverse proxy for published services."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
       <<: *update-config
-    #healthcheck:
-      #test: ["CMD", "curl", "-f", "-L", "--insecure", "http://localhost:49167"]
-      #interval: 1m
-      #timeout: 10s
-      #retries: 3
 
   mosquitto:
     image: eclipse-mosquitto:1.6.2
@@ -272,12 +269,13 @@ services:
         info.tomfi.schemas.docker.service.name: "Mosquitto MQTT Broker."
         info.tomfi.schemas.docker.service.description: "MQTT broker for tomfi services."
       placement:
-        constraints: 
+        constraints:
           - node.hostname == docker_station
       <<: *restart-policy
       <<: *rollback-config
       <<: *update-config
     healthcheck:
+      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "if ! mosquitto_sub -t '$$SYS/#' -C 1 -u $$(cat $$TESTING_USER_FILE) -P $$(cat $$TESTING_PASSWORD_FILE) | grep -q Error; then echo 'healthcheck OK'; exit 0; else echo 'healthcheck ERROR'; exit 1; fi"]
       interval: 5m
       timeout: 10s
