@@ -1,4 +1,4 @@
 * text=auto
 
-*.yml text eol=lf filter=reductPrivateRepo
-*.yaml text eol=lf filter=reductPrivateRepo
+*.yml text eol=lf filter=redactPrivateRepo
+*.yaml text eol=lf filter=redactPrivateRepo
