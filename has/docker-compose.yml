@@ -4,8 +4,10 @@ version: '3.6'
 services:
 
   homeassistant:
-    image: homeassistant/raspberrypi3-homeassistant:0.95.4
+    image: homeassistant/raspberrypi3-homeassistant:0.98.5
     container_name: has_homeassistant
+    environment:
+      - TZ=Asia/Jerusalem
     privileged: true
     cap_add:
       - ALL
@@ -27,7 +29,7 @@ services:
       start_period: 0s
 
   appdaemon:
-    image: <Reducted-Private-Repository>/tomerfi/appdaemon305:rpi_fix
+    image: <Redacted-Private-Repository>/tomerfi/appdaemon305:rpi_fix
     container_name: has_appdaemon
     ports:
       - "5555:5555"
