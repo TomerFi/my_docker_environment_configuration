@@ -12,7 +12,7 @@ I'm running a **Hybrid Swarm** consist of the following nodes:
 | Node Name        | Role      | Docker version | Arch     | OS                    |
 | ---------------- | --------- | -------------- | -------- | --------------------- |
 | `docker_station` | `Manager` | `19.03.2`      | `x86_64` | `Ubuntu 18.04.2`      |
-| `haserver`       | `Worker`  | `18.09.0`      | `armv71` | `Raspbian buster 10 ` |
+| `haserver`       | `Worker`  | `19.03.2`      | `armv71` | `Raspbian buster 10 ` |
 | `docker-desktop` | `Worker`  | `19.03.2`      | `x86_64` | `Windows 10 Pro`      |
 
 > My Swarm is running behind an `Nginx Reverse Proxy`,</br>
