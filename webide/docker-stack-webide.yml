@@ -1,6 +1,10 @@
 ---
 version: "3.7"
 
+x-image-version:
+  &image-version
+  image: tomerfi/c9sdk_docker:latest
+
 x-restart-policy:
   &restart-policy
   restart_policy:
@@ -43,7 +47,7 @@ networks:
 services:
 
   docker:
-    image: tomerfi/c9sdk_docker:latest
+    <<: *image-version
     init: true
     env_file: env/.env_docker
     ports:
@@ -73,7 +77,7 @@ services:
       <<: *update-config
 
   hass:
-    image: tomerfi/c9sdk_docker:latest
+    <<: *image-version
     init: true
     env_file: env/.env_hass
     ports:
@@ -103,7 +107,7 @@ services:
       <<: *update-config
 
   appd:
-    image: tomerfi/c9sdk_docker:latest
+    <<: *image-version
     init: true
     env_file: env/.env_appd
     ports:
