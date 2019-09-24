@@ -46,7 +46,7 @@ networks:
 services:
 
   gitea:
-    image: gitea/gitea:1.9
+    image: gitea/gitea:1.9.3
     init: true
     env_file: env/.env_gitea
     ports:
