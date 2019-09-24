@@ -144,7 +144,7 @@ services:
       start_period: 0s
 
   postgres:
-    image: postgres:11.3
+    image: postgres:11.5
     init: true
     secrets:
       - postgres_user_secret
