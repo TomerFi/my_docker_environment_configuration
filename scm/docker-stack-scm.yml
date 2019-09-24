@@ -83,7 +83,7 @@ services:
       start_period: 0s
 
   drone:
-    image: drone/drone:linux-amd64
+    image: drone/drone:1.4
     init: true
     env_file: env/.env_drone
     ports:
