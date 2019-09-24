@@ -67,7 +67,7 @@ networks:
 services:
 
   rainloop:
-    image: hardware/rainloop:1.12.0
+    image: hardware/rainloop:1.13.0
     init: true
     env_file: env/.env_rainloop
     ports:
@@ -136,7 +136,7 @@ services:
       start_period: 0s
 
   traccar:
-    image: <Reducted-Private-Repository>/tomerfi/traccar:custom_fix
+    image: <Redacted-Private-Repository>/tomerfi/traccar:custom_fix
     init: true
     ports:
       - target: 8082
