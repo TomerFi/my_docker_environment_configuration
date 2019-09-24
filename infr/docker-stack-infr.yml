@@ -54,7 +54,6 @@ networks:
     driver: overlay
     labels:
       info.tomfi.schemas.docker.network.name: "Docker socket access."
-      # yamllint disable-line rule:line-length
       info.tomfi.schemas.docker.network.description: "Use for accesing the docker socket securely. Instead of mounting /var/run/docker.sock use http://infr_securersocket:2375 as endpoint."
     name: tomfi_secure_docker_access
     driver_opts:
@@ -274,7 +273,6 @@ services:
       <<: *rollback-config
       <<: *update-config
     healthcheck:
-      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "if ! mosquitto_sub -t '$$SYS/#' -C 1 -u $$(cat $$TESTING_USER_FILE) -P $$(cat $$TESTING_PASSWORD_FILE) | grep -q Error; then echo 'healthcheck OK'; exit 0; else echo 'healthcheck ERROR'; exit 1; fi"]
       interval: 5m
       timeout: 10s

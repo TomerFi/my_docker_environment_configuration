@@ -128,7 +128,6 @@ services:
       <<: *rollback-config
       <<: *update-config
     healthcheck:
-      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "curl --connect-timeout 15 --show-error --silent --fail --location \"http://localhost:8989\" > /dev/null || exit 1"]
       interval: 5m
       timeout: 10s
@@ -170,7 +169,6 @@ services:
       <<: *rollback-config
       <<: *update-config
     healthcheck:
-      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "if [ $$(curl -L -o /dev/null -s -w %{http_code} http://localhost:8082) -eq 200 ]; then echo 'healthcheck OK'; exit 0; else echo 'healthcheck ERROR'; exit 1; fi"]
       interval: 5m
       timeout: 10s
@@ -205,7 +203,6 @@ services:
       <<: *rollback-config
       <<: *update-config
     healthcheck:
-      # yamllint disable-line rule:line-length
       test: ["CMD-SHELL", "if [ $$(curl -L -o /dev/null -s -w %{http_code} http://localhost:8000/switcher/get_state) -eq 200 ]; then echo 'healthcheck OK'; exit 0; else echo 'healthcheck ERROR'; exit 1; fi"]
       interval: 15m
       timeout: 10s

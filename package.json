@@ -1,0 +1,36 @@
+{
+  "name": "my_docker_environment_configuration",
+  "version": "0.0.1",
+  "description": "My Docker Environment Configuration",
+  "keywords": [
+    "docker",
+    "docker-stack",
+    "docker-compose",
+    "docker-hybrid-stack"
+  ],
+  "homepage": "https://github.com/TomerFi/my_docker_environment_configuration",
+  "bugs": {
+    "url": "https://github.com/TomerFi/my_docker_environment_configuration"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Tomer Figenblat",
+    "email": "tomer.figenblat@gmail.com",
+    "url": "https://github.com/TomerFi"
+  },
+  "contributors": [],
+  "engines": {},
+  "files": [],
+  "directories": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TomerFi/my_docker_environment_configuration"
+  },
+  "scripts": {
+    "yamllint": "yamllint --ignore=node_modules/**/*.{yaml,yml} **/*.{yaml,yml}"
+  },
+  "dependencies": {
+    "yaml-lint": "1.2.4"
+  },
+  "private": true
+}
