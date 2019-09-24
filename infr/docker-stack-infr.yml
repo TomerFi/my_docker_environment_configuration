@@ -170,7 +170,7 @@ services:
       <<: *update-config
 
   traefik:
-    image: traefik:1.7.12
+    image: traefik:1.7.17
     init: true
     configs:
       - source: traefik_dashborad_htpasswd
@@ -211,7 +211,7 @@ services:
       <<: *update-config
 
   nginx:
-    image: <Reducted-Private-Repository>/tomerfi/nginx_mail_proxy:0.1
+    image: <Redacted-Private-Repository>/tomerfi/nginx_mail_proxy:0.1
     init: true
     volumes:
       - /opt/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
