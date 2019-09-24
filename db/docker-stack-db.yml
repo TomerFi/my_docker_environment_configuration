@@ -69,7 +69,7 @@ networks:
 services:
 
   mariadb:
-    image: mariadb:10.4.4-bionic
+    image: mariadb:10.4.8-bionic
     init: true
     secrets:
       - mariadb_root_password_secret
