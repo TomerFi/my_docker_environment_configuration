@@ -151,12 +151,6 @@ services:
       <<: *restart-policy
       <<: *rollback-config
       <<: *update-config
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080"]
-      interval: 5m
-      timeout: 10s
-      retries: 3
-      start_period: 0s
 
   sonarqube:
     image: sonarqube:7.9.1-community
@@ -192,7 +186,7 @@ services:
       <<: *rollback-config
       <<: *update-config
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9000"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
       interval: 5m
       timeout: 10s
       retries: 3
