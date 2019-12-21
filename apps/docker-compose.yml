@@ -1,0 +1,34 @@
+---
+version: '3.7'
+
+services:
+
+  openvpn:
+    image: linuxserver/openvpn-as:2.7.5-ls17
+    container_name: apps_openvpn
+    #init: true
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Jerusalem
+    ports:
+      - target: 943
+        published: 943
+        protocol: tcp
+        mode: host
+      - target: 9433
+        published: 9443
+        protocol: tcp
+        mode: host
+      - target: 1194
+        published: 1194
+        protocol: udp
+        mode: host
+    volumes:
+      - /opt/openvpn/config:/config:rw
+    labels:
+      info.tomfi.schemas.docker.service.name: "OpenVPN."
+      info.tomfi.schemas.docker.service.description: "Full featured secure network tunneling VPN software solution."
+    restart: unless-stopped
