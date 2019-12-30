@@ -191,3 +191,41 @@ services:
       timeout: 10s
       retries: 3
       start_period: 0s
+
+  artifactory:
+    image: docker.bintray.io/jfrog/artifactory-oss:latest
+    init: true
+    env_file: env/.env_artifactory
+    ports:
+      - target: 8081
+        published: 4587
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/artifactory:/var/opt/jfrog/artifactory
+    networks:
+      tomfi_scm_net:
+      tomfi_postgres_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Jfrog Artifactory."
+      info.tomfi.schemas.docker.container.description: "Open source Universal Repository Manager."
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Jfrog Artifactory"
+        info.tomfi.schemas.docker.service.description: "Open source Universal Repository Manager."
+      placement:
+        constraints:
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
+    
