@@ -58,44 +58,10 @@ networks:
     driver_opts:
       com.docker.network.driver.mtu: 1400
 
-  tomfi_mail_services_net:
-    external: true
-
   tomfi_mariadb_net:
     external: true
 
 services:
-
-  rainloop:
-    image: hardware/rainloop:1.13.0
-    init: true
-    env_file: env/.env_rainloop
-    ports:
-      - target: 8888
-        published: 8888
-        protocol: tcp
-        mode: host
-    volumes:
-      - /opt/rainloop/data:/rainloop/data:rw
-    networks:
-      tomfi_mail_services_net:
-      tomfi_mariadb_net:
-    labels:
-      info.tomfi.schemas.docker.container.name: "Rainloop mail client."
-      info.tomfi.schemas.docker.container.description: "Rainloop mail client for use with seperated mail server."
-    deploy:
-      endpoint_mode: vip
-      mode: replicated
-      replicas: 1
-      labels:
-        info.tomfi.schemas.docker.service.name: "Rainloop mail client."
-        info.tomfi.schemas.docker.service.description: "Rainloop mail client for use with seperated mail server."
-      placement:
-        constraints:
-          - node.hostname == docker_station
-      <<: *restart-policy
-      <<: *rollback-config
-      <<: *update-config
 
   qbittorrent:
     image: linuxserver/qbittorrent:amd64-latest
