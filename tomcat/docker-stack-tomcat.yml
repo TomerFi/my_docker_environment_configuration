@@ -1,0 +1,80 @@
+---
+version: "3.7"
+
+x-restart-policy:
+  &restart-policy
+  restart_policy:
+    condition: on-failure
+    delay: 30s
+    max_attempts: 3
+    window: 30s
+
+x-rollback-config:
+  &rollback-config
+  rollback_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: continue
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+x-update-config:
+  &update-config
+  update_config:
+    parallelism: 1
+    delay: 30s
+    failure_action: pause
+    monitor: 60s
+    max_failure_ratio: 1
+    order: stop-first
+
+networks:
+
+  tomfi_tomcat_net:
+    driver: overlay
+    labels:
+      info.tomfi.schemas.docker.network.name: "Apache Tomcat network."
+      info.tomfi.schemas.docker.network.description: "Use for segregating the various tomcat servers."
+    name: tomfi_tomcat_net
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
+
+services:
+
+  ngcdocs:
+    image: tomcat:9.0.30-jdk8-openjdk
+    ports:
+      - target: 8080
+        published: 6761
+        protocol: tcp
+        mode: host
+    volumes:
+      - /opt/tomcat/ngcdocs/conf:/usr/local/tomcat/conf:rw
+      - /opt/tomcat/ngcdocs/webapps:/usr/local/tomcat/webapps:rw
+    networks:
+      tomfi_tomcat_net:
+    labels:
+      info.tomfi.schemas.docker.container.name: "Apache Tomcat."
+      info.tomfi.schemas.docker.container.description: "Webdav enabled web server hosting NGC documentation."
+    command: ["catalina.sh", "run"]
+    #command: ["startup.sh", "security"]
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        info.tomfi.schemas.docker.service.name: "Apache Tomcat."
+        info.tomfi.schemas.docker.service.description: "Webdav enabled web server hosting NGC documentation."
+      placement:
+        constraints:
+          - node.hostname == docker_station
+      <<: *restart-policy
+      <<: *rollback-config
+      <<: *update-config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 0s
