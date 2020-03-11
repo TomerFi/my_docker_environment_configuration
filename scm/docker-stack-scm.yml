@@ -78,7 +78,7 @@ services:
       <<: *update-config
 
   sonarqube:
-    image: sonarqube:7.9.2-community
+    image: sonarqube:8.2-community
     env_file: env/.env_sonarqube
     ports:
       - target: 9000
@@ -86,11 +86,9 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - /opt/sonarqube/conf:/opt/sonarqube/conf
       - /opt/sonarqube/data:/opt/sonarqube/data
       - /opt/sonarqube/logs:/opt/sonarqube/logs
-      - /opt/sonarqube/extensions/plugins:/opt/sonarqube/extensions/plugins
-      - /opt/sonarqube/extensions/downloads:/opt/sonarqube/extensions/downloads
+      - /opt/sonarqube/extensions_8:/opt/sonarqube/extensions
     networks:
       tomfi_scm_net:
       tomfi_postgres_net:
@@ -112,41 +110,6 @@ services:
       <<: *update-config
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000"]
-      interval: 5m
-      timeout: 10s
-      retries: 3
-      start_period: 0s
-
-  nexus:
-    image: sonatype/nexus3:3.21.1
-    init: true
-    ports:
-      - target: 8081
-        published: 4586
-        protocol: tcp
-        mode: host
-    volumes:
-      - /opt/nexus:/nexus-data
-    networks:
-      tomfi_scm_net:
-    labels:
-      info.tomfi.schemas.docker.container.name: "Sonatype Nexus3."
-      info.tomfi.schemas.docker.container.description: "Open source artifact repository with universal format support."
-    deploy:
-      endpoint_mode: vip
-      mode: replicated
-      replicas: 1
-      labels:
-        info.tomfi.schemas.docker.service.name: "Sonatype Nexus3."
-        info.tomfi.schemas.docker.service.description: "Open source artifact repository with universal format support."
-      placement:
-        constraints:
-          - node.hostname == docker_station
-      <<: *restart-policy
-      <<: *rollback-config
-      <<: *update-config
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081"]
       interval: 5m
       timeout: 10s
       retries: 3
