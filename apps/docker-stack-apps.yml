@@ -40,15 +40,6 @@ networks:
     driver_opts:
       com.docker.network.driver.mtu: 1400
 
-  tomfi_qbittorrent_net:
-    driver: overlay
-    labels:
-      info.tomfi.schemas.docker.network.name: "Qbittorrent network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Qbittorrent."
-    name: tomfi_qbittorrent_net
-    driver_opts:
-      com.docker.network.driver.mtu: 1400
-
   tomfi_switcher_webapi_net:
     driver: overlay
     labels:
@@ -62,43 +53,6 @@ networks:
     external: true
 
 services:
-
-  qbittorrent:
-    image: linuxserver/qbittorrent:amd64-latest
-    init: true
-    env_file: env/.env_qbittorrent
-    ports:
-      - target: 8989
-        published: 8989
-        protocol: tcp
-        mode: host
-    volumes:
-      - /downloads:/downloads:rw
-      - /opt/qbittorrent:/config:rw
-    networks:
-      tomfi_qbittorrent_net:
-    labels:
-      info.tomfi.schemas.docker.container.name: "Qbittorrent."
-      info.tomfi.schemas.docker.container.description: "Linuxserver's Qbittorrent."
-    deploy:
-      endpoint_mode: vip
-      mode: replicated
-      replicas: 1
-      labels:
-        info.tomfi.schemas.docker.service.name: "Qbittorrent."
-        info.tomfi.schemas.docker.service.description: "Linuxserver's Qbittorrent."
-      placement:
-        constraints:
-          - node.hostname == docker_station
-      <<: *restart-policy
-      <<: *rollback-config
-      <<: *update-config
-    healthcheck:
-      test: ["CMD-SHELL", "curl --connect-timeout 15 --show-error --silent --fail --location \"http://localhost:8989\" > /dev/null || exit 1"]
-      interval: 5m
-      timeout: 10s
-      retries: 3
-      start_period: 0s
 
   traccar:
     image: <Redacted-Private-Repository>/tomerfi/traccar:custom_fix
