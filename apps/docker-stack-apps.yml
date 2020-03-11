@@ -31,15 +31,6 @@ x-update-config:
 
 networks:
 
-  tomfi_traccar_net:
-    driver: overlay
-    labels:
-      info.tomfi.schemas.docker.network.name: "Traccar network."
-      info.tomfi.schemas.docker.network.description: "Use for internal services interacting with Traccar."
-    name: tomfi_traccar_net
-    driver_opts:
-      com.docker.network.driver.mtu: 1400
-
   tomfi_switcher_webapi_net:
     driver: overlay
     labels:
@@ -49,51 +40,7 @@ networks:
     driver_opts:
       com.docker.network.driver.mtu: 1400
 
-  tomfi_mariadb_net:
-    external: true
-
 services:
-
-  traccar:
-    image: <Redacted-Private-Repository>/tomerfi/traccar:custom_fix
-    init: true
-    ports:
-      - target: 8082
-        published: 8082
-        protocol: tcp
-        mode: host
-      - target: 5055
-        published: 5055
-        protocol: tcp
-        mode: host
-    volumes:
-      - /var/log/traccar:/opt/traccar/logs:rw
-      - /opt/traccar/conf/traccar.xml:/opt/traccar/traccar.xml:ro
-    networks:
-      tomfi_traccar_net:
-      tomfi_mariadb_net:
-    labels:
-      info.tomfi.schemas.docker.container.name: "Traccar platform."
-      info.tomfi.schemas.docker.container.description: "Modern GPS tracking platform for tomfi home."
-    deploy:
-      endpoint_mode: vip
-      mode: replicated
-      replicas: 1
-      labels:
-        info.tomfi.schemas.docker.service.name: "Traccar platform."
-        info.tomfi.schemas.docker.service.description: "Modern GPS tracking platform for tomfi home."
-      placement:
-        constraints:
-          - node.hostname == docker_station
-      <<: *restart-policy
-      <<: *rollback-config
-      <<: *update-config
-    healthcheck:
-      test: ["CMD-SHELL", "if [ $$(curl -L -o /dev/null -s -w %{http_code} http://localhost:8082) -eq 200 ]; then echo 'healthcheck OK'; exit 0; else echo 'healthcheck ERROR'; exit 1; fi"]
-      interval: 5m
-      timeout: 10s
-      retries: 3
-      start_period: 0s
 
   switcher:
     image: tomerfi/switcher_webapi:latest
