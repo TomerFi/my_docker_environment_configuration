@@ -10,8 +10,8 @@ I'm running a **Hybrid Swarm** consist of the following nodes:
 
 | Node Name        | Role      | Docker version | Arch     | OS                    |
 | ---------------- | --------- | -------------- | -------- | --------------------- |
-| `docker_station` | `Manager` | `19.03.6`      | `x86_64` | `Ubuntu 18.04.2`      |
-| `docker-desktop` | `Worker`  | `19.03.5`      | `x86_64` | `Windows 10 Pro`      |
+| `docker_station` | `Manager` | `19.03.8`      | `x86_64` | `Ubuntu 18.04.2`      |
+| `docker-desktop` | `Worker`  | `19.03.8`      | `x86_64` | `Windows 10 Pro`      |
 
 > My Swarm is running behind an `Nginx Reverse Proxy`,</br>
 > The ports published in my configuration are internal.
