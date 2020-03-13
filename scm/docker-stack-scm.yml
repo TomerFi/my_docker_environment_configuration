@@ -45,38 +45,6 @@ networks:
 
 services:
 
-  jenkins:
-    image: jenkins/jenkins:lts-jdk11
-    init: true
-    user: root
-    ports:
-      - target: 8080
-        published: 4584
-        protocol: tcp
-        mode: host
-    volumes:
-      - /opt/jenkins:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      tomfi_scm_net:
-      tomfi_postgres_net:
-    labels:
-      info.tomfi.schemas.docker.container.name: "Jenkins CI."
-      info.tomfi.schemas.docker.container.description: "An open source automation server."
-    deploy:
-      endpoint_mode: vip
-      mode: replicated
-      replicas: 1
-      labels:
-        info.tomfi.schemas.docker.service.name: "Jenkins CI."
-        info.tomfi.schemas.docker.service.description: "An open source automation server."
-      placement:
-        constraints:
-          - node.hostname == docker_station
-      <<: *restart-policy
-      <<: *rollback-config
-      <<: *update-config
-
   sonarqube:
     image: sonarqube:8.2-community
     env_file: env/.env_sonarqube
